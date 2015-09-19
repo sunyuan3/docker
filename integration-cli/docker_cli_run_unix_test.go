@@ -338,3 +338,15 @@ func (s *DockerSuite) TestStopContainerSignal(c *check.C) {
 		c.Fatalf("Expected `exit trapped` in the log, got %v", out)
 	}
 }
+
+func (s *DockerSuite) TestRunSwapLessThanMemoryLimit(c *check.C) {
+	testRequires(c, memoryLimitSupport)
+	testRequires(c, swapMemorySupport)
+	out, _, err := dockerCmdWithError("run", "-m", "16m", "--memory-swap", "15m", "busybox", "echo", "test")
+
+	c.Assert(err, check.NotNil)
+
+	if !strings.Contains(out, "Minimum memoryswap limit should be larger than memory limit") {
+		c.Fatalf("Expected output to contain %q, got %q", expected, out)
+	}
+}
