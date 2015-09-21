@@ -343,10 +343,10 @@ func (s *DockerSuite) TestRunSwapLessThanMemoryLimit(c *check.C) {
 	testRequires(c, memoryLimitSupport)
 	testRequires(c, swapMemorySupport)
 	out, _, err := dockerCmdWithError("run", "-m", "16m", "--memory-swap", "15m", "busybox", "echo", "test")
-
+	expected :="Minimum memoryswap limit should be larger than memory limit"
 	c.Assert(err, check.NotNil)
 
-	if !strings.Contains(out, "Minimum memoryswap limit should be larger than memory limit") {
-		c.Fatalf("Expected output to contain %q, got %q", expected, out)
+	if !strings.Contains(out, expected) {
+		c.Fatalf("Expected output to contain %q, not %q", out, expected)
 	}
 }
